@@ -33,14 +33,15 @@ else:
       except:
         continue
       if video_name == audio_name:
-        audio_full_path = os.path.join(audio_path, audio)
-        video_full_path = os.path.join(video_path, video)
+        audio_full_path = os.path.join(audio_path, audio).replace("&", "^&") # Escape character &
+        video_full_path = os.path.join(video_path, video).replace("&", "^&")
         output_file_name = video_full_path.split(".mkv")[0] + '_RUS.mkv'
         videos_to_remove.append(video_full_path)
 
         if not os.path.isfile(output_file_name):
           print("Insert audio: {} ===>>> In video: {}".format(audio, video))
           command = """{} --ui-language en --output ^"{}^" --no-audio --language 0:rus --default-track 0:yes ^"^(^" ^"{}^" ^"^)^" --language 0:rus --default-track 0:yes ^"^(^" ^"{}^" ^"^)^" --track-order 0:0,1:0""".format(mkv_merge_path, output_file_name, video_full_path, audio_full_path)
+          # print(command)
           os.system(command)
         else:
           print('File Already Exists!!! => {}'.format(output_file_name))
