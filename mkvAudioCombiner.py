@@ -2,6 +2,14 @@ import os
 import sys
 
 
+def print_file_names(folder_path, list_of_files, file_category_name):
+  list_counter = 1
+  for i, file_name in enumerate(list_of_files):
+    if os.path.isfile(os.path.join(folder_path, file_name)) and list_counter < 5:
+      print("{}. {}: {}".format(i, file_category_name, file_name))
+      list_counter += 1
+
+
 mkv_merge_path = sys.argv[1]
 if 'help' in mkv_merge_path:
   print("First param path to mkvmerge.exe cli or write 'ffmpeg' to use it\nSecond param path to video folder\nThird param path to audio folder")
@@ -15,24 +23,25 @@ else:
   audio_files = os.listdir(audio_path)
   videos_to_remove = []
 
-  for i, video in enumerate(video_files):
-    if i < 8:
-      print("{}. {}".format(i + 1, video))
-  video_name_index = int(input("Choose the right video file name. Type number:\n")) - 1
+  print_file_names(video_path, video_files, 'Video')
+  print_file_names(audio_path, audio_files, 'Audio')
+  video_name_index = int(input("Choose the right video file name. Type number:\n"))
 
-  print("Parts splitted by dot:")
-  for i, parsed_video_name in enumerate(video_files[video_name_index].split(".")):
-    print("{}. Video: {} === Audio: {}".format(i + 1, parsed_video_name, audio_files[0].split(".")[i]))
+  pattern_to_parse_file_names = input("Enter symbol to parse file names\nFor example DOT . or space:\n")
+  print(video_files[video_name_index].split(pattern_to_parse_file_names))
+
+  for i, parsed_video_name in enumerate(video_files[video_name_index].split(pattern_to_parse_file_names)):
+    print("{}. VIDEO =========> {} && {} <========= AUDIO".format(i + 1, parsed_video_name, audio_files[0].split(pattern_to_parse_file_names)[i]))
   dot_index = int(input("Choose the right part of video name which is equal with audio name by episode. Type number:\n")) - 1
 
   for video in video_files:
     try:
-      video_name = video.split(".")[dot_index]
+      video_name = video.split(pattern_to_parse_file_names)[dot_index]
     except:
       continue
     for audio in audio_files:
       try:
-        audio_name = audio.split(".")[dot_index]
+        audio_name = audio.split(pattern_to_parse_file_names)[dot_index]
       except:
         continue
       if video_name == audio_name:
